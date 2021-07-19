@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.bp.scada.mapper.mes.E_CLASS_SELECTMapper">
+  <resultMap id="BaseResultMap" type="cn.bp.scada.modle.mes.E_CLASS_SELECT">
+    <constructor>
+      <idArg column="ID" javaType="java.lang.Short" jdbcType="DECIMAL" />
+      <arg column="CONNECT_TIME_SET_ID" javaType="java.lang.Short" jdbcType="DECIMAL" />
+      <arg column="CLASS_TYPE" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="MACHINE_LINE_TYPE" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="SELECT_STATUS" javaType="java.lang.Short" jdbcType="DECIMAL" />
+      <arg column="MACHINEID" javaType="java.lang.String" jdbcType="VARCHAR" />
+    </constructor>
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Short">
+    delete from E_CLASS_SELECT
+    where ID = #{id,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="cn.bp.scada.modle.mes.E_CLASS_SELECT">
+    insert into E_CLASS_SELECT (ID, CONNECT_TIME_SET_ID, CLASS_TYPE, 
+      MACHINE_LINE_TYPE, SELECT_STATUS, MACHINEID
+      )
+    values (#{id,jdbcType=DECIMAL}, #{connectTimeSetId,jdbcType=DECIMAL}, #{classType,jdbcType=VARCHAR}, 
+      #{machineLineType,jdbcType=VARCHAR}, #{selectStatus,jdbcType=DECIMAL}, #{machineid,jdbcType=VARCHAR}
+      )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="cn.bp.scada.modle.mes.E_CLASS_SELECT">
+    update E_CLASS_SELECT
+    set CONNECT_TIME_SET_ID = #{connectTimeSetId,jdbcType=DECIMAL},
+      CLASS_TYPE = #{classType,jdbcType=VARCHAR},
+      MACHINE_LINE_TYPE = #{machineLineType,jdbcType=VARCHAR},
+      SELECT_STATUS = #{selectStatus,jdbcType=DECIMAL},
+      MACHINEID = #{machineid,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=DECIMAL}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Short" resultMap="BaseResultMap">
+    select ID, CONNECT_TIME_SET_ID, CLASS_TYPE, MACHINE_LINE_TYPE, SELECT_STATUS, MACHINEID
+    from E_CLASS_SELECT
+    where ID = #{id,jdbcType=DECIMAL}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select ID, CONNECT_TIME_SET_ID, CLASS_TYPE, MACHINE_LINE_TYPE, SELECT_STATUS, MACHINEID
+    from E_CLASS_SELECT
+    order by status desc
+  </select>
+  <select id="selectDayClassEnable" parameterType="string" resultType="string">
+    select CLASS_TYPE from E_CLASS_SELECT where CONNECT_TIME_SET_ID=(SELECT Max(CONNECT_TIME_SET_ID) FROM E_CLASS_SELECT)
+                                            and MACHINEID=#{machineID,jdbcType=VARCHAR} and SELECT_STATUS=1 and CLASS_TYPE='白班'
+  </select>
+  <select id="selectNightClassEnable" parameterType="string" resultType="string">
+    select CLASS_TYPE from E_CLASS_SELECT where CONNECT_TIME_SET_ID=(SELECT Max(CONNECT_TIME_SET_ID) FROM E_CLASS_SELECT)
+                                            and MACHINEID=#{machineID,jdbcType=VARCHAR} and SELECT_STATUS=1 and CLASS_TYPE='夜班'
+  </select>
+  <select id="selectLineName" parameterType="string" resultType="string">
+    select MACHINE_LINE_TYPE from E_CLASS_SELECT where ID=(SELECT Max(ID) from E_CLASS_SELECT where MACHINEID=#{machineID,jdbcType=VARCHAR})
+  </select>
+  <insert id="insertallline" parameterType="cn.bp.scada.modle.mes.E_CLASS_SELECT">
+    insert into E_CLASS_SELECT(CONNECT_TIME_set_id,class_type, machine_line_type,select_status,machineid)
+    select (select max(id) from E_TIME_SET) CONNECT_TIME_set_id, class_type, machine_line_type,select_status,machineid
+    from E_CLASS_SELECT WHERE CONNECT_TIME_set_id=(select max(CONNECT_TIME_set_id) from E_CLASS_SELECT)
+  </insert>
+  <update id="updateStatus" parameterType="cn.bp.scada.modle.mes.E_CLASS_SELECT">
+    update E_CLASS_SELECT
+    set SELECT_STATUS = #{selectStatus,jdbcType=DECIMAL}
+    where CONNECT_TIME_SET_ID = (select max(CONNECT_TIME_SET_ID) from E_CLASS_SELECT) and
+        CLASS_TYPE = #{classType,jdbcType=VARCHAR} and MACHINEID = #{machineid,jdbcType=VARCHAR}
+  </update>
+</mapper>

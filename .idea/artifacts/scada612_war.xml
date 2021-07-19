@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="scada612:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <properties id="maven-jee-properties">
+      <options>
+        <module>scada612</module>
+        <packaging>war</packaging>
+      </options>
+    </properties>
+    <root id="archive" name="scada612.war">
+      <element id="artifact" artifact-name="scada612:war exploded" />
+    </root>
+  </artifact>
+</component>

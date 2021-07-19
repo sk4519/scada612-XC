@@ -1,0 +1,55 @@
+/target/
+!.mvn/wrapper/maven-wrapper.jar
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+ABAP_AS_WITH_POOL.jcoDestination
+dev_jco_rfc.trc
+bin/
+
+
+
+
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+ABAP_AS_WITH_POOL.jcoDestination
+dev_jco_rfc.trc
+bin/
+
+
+
+
+### NetBeans ###
+/nbproject/private/
+/build/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+ABAP_AS_WITH_POOL.jcoDestination
+dev_jco_rfc.trc
+bin/
+
+### gitignore ###
+.gitignore
+
+### Eclipse ###
+.classpath
+.project
+.externalToolBuilders/
+.metadata
+.settings
+ABAP_AS_WITH_POOL.jcoDestination
+dev_jco_rfc.trc
+
+

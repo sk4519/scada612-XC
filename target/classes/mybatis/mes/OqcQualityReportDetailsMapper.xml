@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.bp.scada.mapper.mes.OqcQualityReportDetailsMapper">
+  <resultMap id="BaseResultMap" type="cn.bp.scada.modle.mes.OqcQualityReportDetails">
+    <constructor>
+      <arg column="ID" javaType="java.lang.Integer" jdbcType="DECIMAL" />
+      <arg column="OQC_QUALITY_REPORT_ID" javaType="java.lang.Integer" jdbcType="DECIMAL" />
+      <arg column="INSP_TYPE_CODE" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="INSP_TYPE_NAME" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="INSP_TYPE_SORT" javaType="java.lang.Integer" jdbcType="DECIMAL" />
+      <arg column="INSP_DESC_CODE" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="INSP_DESC_NAME" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="INSP_DESC_SORT" javaType="java.lang.Integer" jdbcType="DECIMAL" />
+      <arg column="INSP_RESULT" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="REMARKS" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="CRT_ID" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="CRT_DT" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+      <arg column="UPT_ID" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="UPT_DT" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+    </constructor>
+  </resultMap>
+  <insert id="insert" parameterType="cn.bp.scada.modle.mes.OqcQualityReportDetails">
+      	<selectKey resultType="java.lang.Integer" keyProperty="ID" order="BEFORE"> 
+            SELECT REPORT_DETAILS_SEQ.NEXTVAL FROM DUAL 
+        </selectKey>
+    insert into OQC_QUALITY_REPORT_DETAILS (
+	      ID, 
+	      OQC_QUALITY_REPORT_ID, 
+	      INSP_TYPE_CODE,
+	      INSP_TYPE_NAME, 
+	      INSP_TYPE_SORT, 
+	      INSP_DESC_CODE,
+	      INSP_DESC_NAME, 
+	      INSP_DESC_SORT, 
+	      INSP_RESULT,
+	      REMARKS, 
+	      CRT_ID, 
+	      CRT_DT,
+	      UPT_ID, 
+	      UPT_DT)
+     <foreach collection="list" item="item" index="index" separator="union all">
+     SELECT
+          #{ID,jdbcType=DECIMAL},
+	      #{item.oqcQualityReportId,jdbcType=DECIMAL}, 
+	      #{item.inspTypeCode,jdbcType=VARCHAR},
+	      #{item.inspTypeName,jdbcType=VARCHAR}, 
+	      #{item.inspTypeSort,jdbcType=DECIMAL}, 
+	      #{item.inspDescCode,jdbcType=VARCHAR},
+	      #{item.inspDescName,jdbcType=VARCHAR}, 
+	      #{item.inspDescSort,jdbcType=DECIMAL}, 
+	      #{item.inspResult,jdbcType=VARCHAR},
+	      #{item.remarks,jdbcType=VARCHAR}, 
+	      #{item.crtId,jdbcType=VARCHAR}, 
+	      SYSDATE,
+	      #{item.uptId,jdbcType=VARCHAR}, 
+	      #{item.uptDt,jdbcType=TIMESTAMP}
+	      FROM DUAL 
+	 </foreach>
+  </insert>
+  
+  <select id="selectAll" resultMap="BaseResultMap">
+    select ID, OQC_QUALITY_REPORT_ID, INSP_TYPE_CODE, INSP_TYPE_NAME, INSP_TYPE_SORT,
+    INSP_DESC_CODE, INSP_DESC_NAME, INSP_DESC_SORT, INSP_RESULT, REMARKS, CRT_ID, CRT_DT,
+    UPT_ID, UPT_DT
+    from OQC_QUALITY_REPORT_DETAILS
+  </select>
+  
+  
+  <update id="batchUpdateOQC" parameterType="java.util.List">
+    <foreach collection="list" item="item" index="index" separator=";">
+	  UPDATE MES1.OQC_QUALITY_REPORT_DETAILS
+	   <set> 
+	        <if test="item.INSP_TYPE_CODE!=null">
+	       		INSP_TYPE_CODE = #{item.inspTypeCode,jdbcType=VARCHAR},
+	        </if>
+
+	        <if test="item.INSP_TYPE_NAME!=null">
+	       		INSP_TYPE_NAME = #{item.inspTypeName,jdbcType=VARCHAR}, 
+	        </if>
+	        
+	        <if test="item.INSP_TYPE_SORT!=null">
+	       		INSP_TYPE_SORT =  #{item.inspTypeSort,jdbcType=DECIMAL}, 
+	        </if>
+
+	        <if test="item.INSP_DESC_CODE!=null">
+	       		INSP_DESC_CODE = #{item.inspDescCode,jdbcType=VARCHAR}, 
+	        </if>
+	        
+	        <if test="item.INSP_DESC_NAME!=null">
+	       		INSP_DESC_NAME = #{item.inspDescName,jdbcType=VARCHAR}, 
+	        </if>
+
+	       <if test="item.INSP_DESC_SORT!=null">
+	       		INSP_DESC_SORT = #{item.inspDescSort,jdbcType=DECIMAL},
+	        </if>
+
+	        <if test="item.INSP_RESULT!=null">
+	       		INSP_RESULT = #{item.inspResult,jdbcType=VARCHAR},
+	        </if>
+	        
+	        <if test="item.REMARKS!=null">
+	       		INSP_RESULT = #{item.remarks,jdbcType=VARCHAR},
+	        </if>
+		      UPT_ID = #{item.uptId,jdbcType=VARCHAR}, 
+		      UPT_DT = SYSDATE  
+	 </set>
+	 <where> 
+	   AND OQC_QUALITY_REPORT_ID = '${item.OQC_QUALITY_REPORT_ID}'
+	 </where>
+	</foreach>   
+  </update>
+  
+</mapper>

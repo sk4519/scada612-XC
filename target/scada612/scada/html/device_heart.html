@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <link rel="icon" href="https://jscdn.com.cn/highcharts/images/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="../../layui/css/layui.css"><!--引入layui文件，-->
+    <script src="../../layui/layui.js"></script>  <!--//--引入layui中的js文件 -->
+    <style>
+        .dv1 {
+            position: absolute;
+            left: 0px;
+            top: 0px;
+            width: 100%;
+            height: 100%
+        }
+    </style>
+    <script src="../js/highcharts.js"></script>
+    <script src="../js/exporting.js"></script>
+    <script src="../js/dark-unica.js"></script>
+    <!--<script src="https://img.hcharts.cn/highcharts-plugins/highcharts-zh_CN.js"></script>-->
+</head>
+<body>
+<div id="container" class="dv1"></div>
+<script>
+    layui.use(['form', 'layer', 'upload', 'table', 'jquery'], function () {
+        var form = layui.form
+            , layer = layui.layer
+            , upload = layui.upload
+            , table = layui.table
+            , $ = layui.jquery;
+statePLC = function () {
+    $.ajax({
+        url: '/states',
+        type: 'post',
+        datatype: 'JSON',
+        success: function (data) {
+            charts(data);
+        }
+    });
+}
+
+
+
+        charts = function (array) {
+            var chart = Highcharts.chart('container', {
+                chart: {
+                    type: 'column'
+                },
+                title: {
+                    text: '上位机状态监控',
+                    style: {
+                        color: '#44A9A8',
+                        fontWeight: 'bold',
+                        fontSize : '28px',
+                    }
+                },
+                subtitle: {
+                    text: 'inspur',
+                    style: {
+                        color: '#44A9A8',
+                        fontWeight: 'bold',
+                        fontSize : '18px',
+                    }
+                },
+                xAxis: {
+                    categories: [
+                        '分拣线上位机', 'A线主板下料机', 'A线机箱上位机', 'A线硬盘光驱上位机', 'A线贴标机', 'A线吸吊移栽机',
+                        'B线主板下料机', 'B线机箱上位机', 'B线硬盘光驱上位机', 'B线贴标机', 'B线吸吊移栽机', '老化机', '后测机'
+                    ],
+                    labels: {
+                        formatter: function () {
+                            return this.value
+                        },
+                        style: {
+                            color: '#fff',
+                            fontSize:'14px',
+                            fontFamily:'微软雅黑'
+                        }
+                    },
+                    crosshair: true
+                },
+                yAxis: {
+                    min: 0,
+                    title: {
+                        text: '状态监控图'
+                    },
+                    lineColor: "green",// Y轴的颜色
+                    lineWidth: 1,// Y轴的宽度
+                    gridLineWidth: 0// 横向格线宽度
+                },
+                tooltip: {
+                    // head + 每个 point + footer 拼接成完整的 table
+                    headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                    pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                        '<td style="padding:0"><b>{point.y} </b></td></tr>',
+                    footerFormat: '</table>',
+                    shared: true,
+                    useHTML: true
+                },
+                plotOptions: {
+                    column: {
+                        borderWidth: 0
+                    }
+                },
+                series: [{
+                    name: '刑村',
+                    data: array
+                }
+                ]
+            });
+        }
+        statePLC();
+        setInterval(statePLC,20000);
+    });
+</script>
+</body>
+</html>

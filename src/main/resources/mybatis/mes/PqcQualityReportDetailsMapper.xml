@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.bp.scada.mapper.mes.PqcQualityReportDetailsMapper">
+  <resultMap id="BaseResultMap" type="cn.bp.scada.modle.mes.PqcQualityReportDetails">
+    <constructor>
+      <arg column="ID" javaType="java.lang.Integer" jdbcType="DECIMAL" />
+      <arg column="PQC_QUALITY_REPORT_ID" javaType="java.lang.Integer" jdbcType="DECIMAL" />
+      <arg column="INSP_TYPE_CODE" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="INSP_TYPE_NAME" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="INSP_TYPE_SORT" javaType="java.lang.Integer" jdbcType="DECIMAL" />
+      <arg column="INSP_DESC_CODE" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="INSP_DESC_NAME" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="INSP_DESC_SORT" javaType="java.lang.Integer" jdbcType="DECIMAL" />
+      <arg column="INSP_RESULT" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="REMARKS" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="CRT_ID" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="CRT_DT" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+      <arg column="UPT_ID" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="UPT_DT" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+    </constructor>
+  </resultMap>
+   <insert id="insert" parameterType="cn.bp.scada.modle.mes.PqcQualityReportDetails">
+      INSERT INTO MES1.PQC_QUALITY_REPORT_DETAILS
+             (ID, 
+		      PQC_QUALITY_REPORT_ID, 
+		      INSP_TYPE_CODE,
+		      INSP_TYPE_NAME, 
+		      INSP_TYPE_SORT, 
+		      INSP_DESC_CODE,
+		      INSP_DESC_NAME, 
+		      INSP_DESC_SORT, 
+		      INSP_RESULT,
+		      REMARKS, 
+		      CRT_ID, 
+		      CRT_DT,
+		      UPT_ID, 
+		      UPT_DT
+             )
+      select PQC_QUALITY_REPORT_DETAILS_SEQ.NEXTVAL,T.* from(
+      <foreach collection="list" item="item" index="index" separator="union all">
+         (SELECT
+	      #{item.pqcQualityReportId,jdbcType=DECIMAL}, 
+	      #{item.inspTypeCode,jdbcType=VARCHAR},
+	      #{item.inspTypeName,jdbcType=VARCHAR}, 
+	      #{item.inspTypeSort,jdbcType=DECIMAL}, 
+	      #{item.inspDescCode,jdbcType=VARCHAR},
+	      #{item.inspDescName,jdbcType=VARCHAR}, 
+	      #{item.inspDescSort,jdbcType=DECIMAL}, 
+	      #{item.inspResult,jdbcType=VARCHAR},
+	      #{item.remarks,jdbcType=VARCHAR}, 
+	      #{item.crtId,jdbcType=VARCHAR}, 
+	      SYSDATE,
+	      #{item.uptId,jdbcType=VARCHAR}, 
+	      #{item.uptDt,jdbcType=TIMESTAMP}
+	      FROM DUAL )
+      </foreach>
+      )T
+    </insert>
+   
+
+  <select id="selectAll" resultMap="BaseResultMap">
+    select ID, PQC_QUALITY_REPORT_ID, INSP_TYPE_CODE, INSP_TYPE_NAME, INSP_TYPE_SORT,
+    INSP_DESC_CODE, INSP_DESC_NAME, INSP_DESC_SORT, INSP_RESULT, REMARKS, CRT_ID, CRT_DT,
+    UPT_ID, UPT_DT
+    from MES1.PQC_QUALITY_REPORT_DETAILS
+  </select>
+  
+<!--   <update id="batchUpdatePQC" parameterType="java.util.List">
+    <foreach collection="list" item="item" index="index" open="begin" close=";end;" separator=";">
+	  UPDATE MES1.PQC_QUALITY_REPORT_DETAILS
+	   <set> 
+	        <if test="item.inspTypeCode!=null and item.inspTypeCode!=''">
+	       		INSP_TYPE_CODE = #{item.inspTypeCode,jdbcType=VARCHAR},
+	        </if>
+
+	        <if test="item.inspTypeName!=null and item.inspTypeName!=''">
+	       		INSP_TYPE_NAME = #{item.inspTypeName,jdbcType=VARCHAR}, 
+	        </if>
+	        
+	        <if test="item.inspTypeSort!=null and item.inspTypeSort!=''">
+	       		INSP_TYPE_SORT =  #{item.inspTypeSort,jdbcType=DECIMAL}, 
+	        </if>
+
+	        <if test="item.inspDescCode!=null and item.inspDescCode!=''">
+	       		INSP_DESC_CODE = #{item.inspDescCode,jdbcType=VARCHAR}, 
+	        </if>
+	        
+	        <if test="item.inspDescName!=null and item.inspDescName!=''">
+	       		INSP_DESC_NAME = #{item.inspDescName,jdbcType=VARCHAR}, 
+	        </if>
+
+	       <if test="item.inspDescSort!=null and item.inspDescSort!=''">
+	       		INSP_DESC_SORT = #{item.inspDescSort,jdbcType=DECIMAL},
+	        </if>
+
+	        <if test="item.inspResult !=null and  item.inspResult !=''">
+	       		INSP_RESULT = #{item.inspResult,jdbcType=VARCHAR},
+	        </if>
+	        
+	        <if test="item.remarks !=null and item.remarks !=''">
+	       		REMARKS = #{item.remarks,jdbcType=VARCHAR},
+	        </if>
+		      UPT_ID = #{item.uptId,jdbcType=VARCHAR}, 
+		      UPT_DT = SYSDATE  
+	 </set>
+	 <where> 
+	   AND PQC_QUALITY_REPORT_ID = '${item.pqcQualityReportId}'
+	 </where>
+	</foreach>   
+  </update> -->
+  
+ <update id="updateBatchPQC" parameterType="cn.bp.scada.modle.mes.PqcQualityReportDetails">
+      <foreach collection="list"  item="item" index="index" open="begin" close=";end;" separator=";">
+		 update MES1.PQC_QUALITY_REPORT_DETAILS
+	   <set> 
+	        <if test="item.inspTypeCode!=null and item.inspTypeCode!=''">
+	       		INSP_TYPE_CODE = '${item.inspTypeCode}',
+	        </if>
+
+	        <if test="item.inspTypeName!=null and item.inspTypeName!=''">
+	       		INSP_TYPE_NAME = '${item.inspTypeName}', 
+	        </if>
+	        
+	        <if test="item.inspTypeSort!=null and item.inspTypeSort!=''">
+	       		INSP_TYPE_SORT =  '${item.inspTypeSort}', 
+	        </if>
+
+	        <if test="item.inspDescCode!=null and item.inspDescCode!=''">
+	       		INSP_DESC_CODE = '${item.inspDescCode}', 
+	        </if>
+	        
+	        <if test="item.inspDescName!=null and item.inspDescName!=''">
+	       		INSP_DESC_NAME = '${item.inspDescName}', 
+	        </if>
+
+	       <if test="item.inspDescSort!=null and item.inspDescSort!=''">
+	       		INSP_DESC_SORT = '${item.inspDescSort}',
+	        </if>
+
+	        <if test="item.inspResult !=null and  item.inspResult !=''">
+	       		INSP_RESULT = '${item.inspResult}',
+	        </if>
+	        
+	        <if test="item.remarks !=null and item.remarks !=''">
+	       		REMARKS = '${item.remarks}',
+	        </if>
+		      UPT_ID = '${item.uptId}', 
+		      UPT_DT = SYSDATE  
+	 </set>
+	 <where>
+	      1=1
+	     AND INSP_DESC_CODE = '${item.inspDescCode}' 
+	     AND PQC_QUALITY_REPORT_ID = ${item.pqcQualityReportId}
+	 </where>
+    </foreach>
+</update>
+
+
+</mapper>

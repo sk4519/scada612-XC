@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.bp.scada.mapper.mes.E_TIME_SETMapper">
+  <resultMap id="BaseResultMap" type="cn.bp.scada.modle.mes.E_TIME_SET">
+    <constructor>
+      <idArg column="ID" javaType="java.lang.Short" jdbcType="DECIMAL" />
+      <arg column="STOP_RECORD_TIME_SET" javaType="java.lang.Short" jdbcType="DECIMAL" />
+      <arg column="RECORD_TIME" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+      <arg column="DAY_MORNING1" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="DAY_MORNING2" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="DAY_AFTERNOON1" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="DAY_AFTERNOON2" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="DAY_NIGHT1" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="DAY_NIGHT2" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="NIGHT_MORNING1" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="NIGHT_MORNING2" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="NIGHT_AFTERNOON1" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="NIGHT_AFTERNOON2" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="NIGHT_NIGHT1" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="NIGHT_NIGHT2" javaType="java.lang.String" jdbcType="VARCHAR" />
+    </constructor>
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Short">
+    delete from E_TIME_SET
+    where ID = #{id,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="cn.bp.scada.modle.mes.E_TIME_SET">
+    insert into E_TIME_SET (STOP_RECORD_TIME_SET, RECORD_TIME,
+      DAY_MORNING1, DAY_MORNING2, DAY_AFTERNOON1, 
+      DAY_AFTERNOON2, DAY_NIGHT1, DAY_NIGHT2, 
+      NIGHT_MORNING1, NIGHT_MORNING2, NIGHT_AFTERNOON1, 
+      NIGHT_AFTERNOON2, NIGHT_NIGHT1, NIGHT_NIGHT2
+      )
+    values (#{stopRecordTimeSet,jdbcType=DECIMAL}, #{recordTime,jdbcType=TIMESTAMP},
+      #{dayMorning1,jdbcType=VARCHAR}, #{dayMorning2,jdbcType=VARCHAR}, #{dayAfternoon1,jdbcType=VARCHAR}, 
+      #{dayAfternoon2,jdbcType=VARCHAR}, #{dayNight1,jdbcType=VARCHAR}, #{dayNight2,jdbcType=VARCHAR}, 
+      #{nightMorning1,jdbcType=VARCHAR}, #{nightMorning2,jdbcType=VARCHAR}, #{nightAfternoon1,jdbcType=VARCHAR}, 
+      #{nightAfternoon2,jdbcType=VARCHAR}, #{nightNight1,jdbcType=VARCHAR}, #{nightNight2,jdbcType=VARCHAR}
+      )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="cn.bp.scada.modle.mes.E_TIME_SET">
+    update E_TIME_SET
+    set STOP_RECORD_TIME_SET = #{stopRecordTimeSet,jdbcType=DECIMAL},
+      RECORD_TIME = #{recordTime,jdbcType=TIMESTAMP},
+      DAY_MORNING1 = #{dayMorning1,jdbcType=VARCHAR},
+      DAY_MORNING2 = #{dayMorning2,jdbcType=VARCHAR},
+      DAY_AFTERNOON1 = #{dayAfternoon1,jdbcType=VARCHAR},
+      DAY_AFTERNOON2 = #{dayAfternoon2,jdbcType=VARCHAR},
+      DAY_NIGHT1 = #{dayNight1,jdbcType=VARCHAR},
+      DAY_NIGHT2 = #{dayNight2,jdbcType=VARCHAR},
+      NIGHT_MORNING1 = #{nightMorning1,jdbcType=VARCHAR},
+      NIGHT_MORNING2 = #{nightMorning2,jdbcType=VARCHAR},
+      NIGHT_AFTERNOON1 = #{nightAfternoon1,jdbcType=VARCHAR},
+      NIGHT_AFTERNOON2 = #{nightAfternoon2,jdbcType=VARCHAR},
+      NIGHT_NIGHT1 = #{nightNight1,jdbcType=VARCHAR},
+      NIGHT_NIGHT2 = #{nightNight2,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=DECIMAL}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Short" resultMap="BaseResultMap">
+    select ID, STOP_RECORD_TIME_SET, RECORD_TIME, DAY_MORNING1, DAY_MORNING2, DAY_AFTERNOON1, 
+    DAY_AFTERNOON2, DAY_NIGHT1, DAY_NIGHT2, NIGHT_MORNING1, NIGHT_MORNING2, NIGHT_AFTERNOON1, 
+    NIGHT_AFTERNOON2, NIGHT_NIGHT1, NIGHT_NIGHT2
+    from E_TIME_SET
+    where ID = #{id,jdbcType=DECIMAL}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select ID, STOP_RECORD_TIME_SET, RECORD_TIME, DAY_MORNING1, DAY_MORNING2, DAY_AFTERNOON1, 
+    DAY_AFTERNOON2, DAY_NIGHT1, DAY_NIGHT2, NIGHT_MORNING1, NIGHT_MORNING2, NIGHT_AFTERNOON1, 
+    NIGHT_AFTERNOON2, NIGHT_NIGHT1, NIGHT_NIGHT2
+    from E_TIME_SET
+    order by status desc
+  </select>
+  <select id="selectNewTime" parameterType="java.lang.Short" resultMap="BaseResultMap">
+    select ID, STOP_RECORD_TIME_SET, RECORD_TIME, DAY_MORNING1, DAY_MORNING2, DAY_AFTERNOON1,
+           DAY_AFTERNOON2, DAY_NIGHT1, DAY_NIGHT2, NIGHT_MORNING1, NIGHT_MORNING2, NIGHT_AFTERNOON1,
+           NIGHT_AFTERNOON2, NIGHT_NIGHT1, NIGHT_NIGHT2
+    from E_TIME_SET
+    where ID=(SELECT Max(id) FROM E_TIME_SET)
+  </select>
+  <select id="selectMAXID" parameterType="java.lang.Short" resultMap="BaseResultMap">
+  SELECT Max(id) FROM E_TIME_SET
+  </select>
+</mapper>

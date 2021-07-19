@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.bp.scada.mapper.scada.Pack">
+
+
+    <!-- 新增外箱打印缓存表 -->
+    <insert id="insertPack" parameterType="hashmap">
+        INSERT INTO MES1.TEMP_PRINT
+        (ID,
+        ITEM_NM,
+        ITEM_CD,
+        JX_SN,
+        O_NO,
+        SALE_NO,
+        PRO_NO,
+        PRO_NM,
+        PRO_CD,
+        PRO_TIME,
+        CPU_NM,
+        YP_NM,
+        NC_NM,
+        STATUS,
+        CR_DT,
+        CD,
+        OTHER,
+        NVG_CODE,
+        WAY,
+        NET_CARD)
+        <selectKey resultType="int" keyProperty="ID" order="BEFORE">
+            select MES1.TEMP_PRINT_SEQ.Nextval FROM DUAL
+        </selectKey>
+        VALUES
+        (
+        '${ID}',
+        '${ITEM_NM}',
+        '${ITEM_CD}',
+        '${JX_SN}',
+        '${O_NO}',
+        '${SALE_NO}',
+        '${PRO_NO}',
+        '${PRO_NM}',
+        '${PRO_CD}',
+        '${PRO_TIME}',
+        '${CPU_NM}',
+        '${YP_NM}',
+        '${NC_NM}',
+        '0',
+        sysdate,
+        '${CD}',
+        '${OTHER}',
+        '${NVG_CODE}',
+        '${WAY}',
+        '${NET_CARD}')
+    </insert>
+
+    <update id="updateBatchBind" parameterType="java.util.List">
+        <foreach collection="list" index="index" item="item" open="begin" separator=";" close=";end;">
+            update MES1.OLD_SHELF_BIND
+            <set>
+                REMARK = 'Pass',
+                MODIFITIME = sysdate
+            </set>
+            WHERE PRODUCTSN = ${item.sn}
+        </foreach>
+    </update>
+
+    <update id="updateBatchBindFail" parameterType="java.util.List">
+        <foreach collection="list" index="index" item="item" open="begin" separator=";" close=";end;">
+            update MES1.OLD_SHELF_BIND
+            <set>
+                REMARK = 'Fail',
+                MODIFITIME = sysdate
+            </set>
+            WHERE PRODUCTSN = ${item.sn}
+        </foreach>
+    </update>
+
+    <select id="queryDevice" parameterType="string" resultType="string">
+		SELECT T1.ET_CD, T1.ET_NM from iplant1.C_IPLANT_E2_T T1 WHERE T1.ET_NM = #{etNm}
+
+	</select>
+
+    <select id="queryCheckType" parameterType="java.lang.String" resultType="java.lang.String">
+		SELECT  T1.DICT_IT,T1.DICT_IT_NM FROM  iplant1.C_iplant_DD_T T1
+	where T1.USE_YN='Y'
+	AND  T1.DICT_CD='CKB02' AND T1.DICT_IT_NM= #{CheckType}
+	</select>
+
+    <insert id="insertCheck" parameterType="list">
+ 			INSERT INTO
+	   		   	  iplant1.C_IPLANT_C6_T
+	   		   	  	(
+	   		   	  	 CK_CD,
+					 CK_NM,
+					 DICT_IT,
+					 CK_TY,
+					 CK_SORT,
+					 CUS_RM,
+					 USE_YN,
+					 IS_UR,
+					 CRT_ID,
+					 CRT_DT
+	   		   	  	)
+		(
+		<foreach collection="list" item="item" index="index" separator="union all">
+
+			select
+			#{item.CK_CD},
+			#{item.CK_NM},
+			#{item.ET_NM},
+			#{item.CK_TY_NM},
+			#{item.CK_SORT},
+			#{item.CUS_RM},
+			#{item.USE_YN},
+			#{item.IS_UR},
+			#{item.CRT_ID},
+			to_date(#{item.CRT_DT},'YYYY/MM/DD HH24:mi:ss')
+			from DUAL
+		</foreach>
+		)
+	</insert>
+
+	<select id="seleCKCD" parameterType="list" resultType="string">
+		SELECT * FROM iplant1.C_IPLANT_C6_T WHERE   CK_CD in
+		<foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</select>
+
+</mapper>

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.bp.scada.mapper.mes.OqcQualityReportMapper">
+  <resultMap id="BaseResultMap" type="cn.bp.scada.modle.mes.OqcQualityReport">
+    <constructor>
+      <idArg column="ID" javaType="java.lang.Integer" jdbcType="DECIMAL" />
+      <arg column="SN_NO" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="IS_SECRECY" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="CRT_ID" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="CRT_DT" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+      <arg column="UPT_ID" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="UPT_DT" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+      <arg column="CLASSIFY" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="ATTRIBUT" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="FAULT_DESCRIPTION" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="REPAIR_METHOD" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="REMARKS" javaType="java.lang.String" jdbcType="VARCHAR" />
+    </constructor>
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from OQC_QUALITY_REPORT
+    where ID = #{id,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="cn.bp.scada.modle.mes.OqcQualityReport" useGeneratedKeys="true" keyProperty="id" keyColumn="id" >
+    insert into OQC_QUALITY_REPORT (ID, SN_NO, IS_SECRECY,
+      CRT_ID, CRT_DT, UPT_ID,
+      UPT_DT, CLASSIFY, ATTRIBUT,
+      FAULT_DESCRIPTION, REPAIR_METHOD, REMARKS
+      )
+   <selectKey resultType ="java.lang.Integer"  keyProperty="id" order="BEFORE">
+       select OQC_MAIN_TABLE_SEQ.Nextval FROM DUAL
+   </selectKey>
+    values (#{id,jdbcType=DECIMAL}, #{snNo,jdbcType=VARCHAR}, #{isSecrecy,jdbcType=VARCHAR},
+      #{crtId,jdbcType=VARCHAR}, SYSDATE, #{uptId,jdbcType=VARCHAR},
+      #{uptDt,jdbcType=TIMESTAMP}, #{classify,jdbcType=VARCHAR}, #{attribut,jdbcType=VARCHAR},
+      #{faultDescription,jdbcType=VARCHAR}, #{repairMethod,jdbcType=VARCHAR}, #{remarks,jdbcType=VARCHAR}
+      )
+  </insert>
+
+<!--   <update id="updateByPrimaryKey" parameterType="cn.bp.scada.modle.mes.OqcQualityReport">
+    update OQC_QUALITY_REPORT
+   <set>
+   	         <if test="SN_NO!=null">
+	       		SN_NO = #{snNo,jdbcType=VARCHAR},
+	        </if>
+	        <if test="IS_SECRECY!=null">
+	       		IS_SECRECY = #{isSecrecy,jdbcType=VARCHAR},
+	        </if>
+	       <if test="CLASSIFY!=null">
+	       		CLASSIFY = #{classify,jdbcType=VARCHAR},
+	       </if>
+	       <if test="ATTRIBUT!=null">
+	       		ATTRIBUT = #{attribut,jdbcType=VARCHAR},
+	       </if>
+	       <if test="FAULT_DESCRIPTION!=null">
+	       		FAULT_DESCRIPTION = #{faultDescription,jdbcType=VARCHAR},
+	       </if>
+	       <if test="REPAIR_METHOD!=null">
+	       		REPAIR_METHOD = #{repairMethod,jdbcType=VARCHAR},
+	       </if> 
+	       <if test="REMARKS!=null">
+	       		REMARKS = #{remarks,jdbcType=VARCHAR},
+	       </if>     
+	      UPT_ID = #{uptId,jdbcType=VARCHAR},
+	      UPT_DT = SYSDATE
+    </set>
+    <where> 
+	       ID = #{id,jdbcType=DECIMAL}
+	</where>
+  </update>
+   -->
+  
+  
+<update id="updateByPrimaryKey" parameterType="cn.bp.scada.modle.mes.OqcQualityReport"> 
+   update OQC_QUALITY_REPORT
+    set SN_NO = #{snNo,jdbcType=VARCHAR},
+      IS_SECRECY = #{isSecrecy,jdbcType=VARCHAR},
+      UPT_ID = #{uptId,jdbcType=VARCHAR},
+      UPT_DT = SYSDATE,
+      CLASSIFY = #{classify,jdbcType=VARCHAR},
+      ATTRIBUT = #{attribut,jdbcType=VARCHAR},
+      FAULT_DESCRIPTION = #{faultDescription,jdbcType=VARCHAR},
+      REPAIR_METHOD = #{repairMethod,jdbcType=VARCHAR},
+      REMARKS = #{remarks,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=DECIMAL}
+  </update>
+  
+  
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select ID, SN_NO, IS_SECRECY, CRT_ID, CRT_DT, UPT_ID, UPT_DT, CLASSIFY, ATTRIBUT,
+    FAULT_DESCRIPTION, REPAIR_METHOD, REMARKS
+    from OQC_QUALITY_REPORT
+    where ID = #{id,jdbcType=DECIMAL}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select ID, SN_NO, IS_SECRECY, CRT_ID, CRT_DT, UPT_ID, UPT_DT, CLASSIFY, ATTRIBUT,
+    FAULT_DESCRIPTION, REPAIR_METHOD, REMARKS
+    from OQC_QUALITY_REPORT
+  </select>
+</mapper>

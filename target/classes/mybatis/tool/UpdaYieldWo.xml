@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+    <mapper namespace="cn.bp.scada.mapper.scada.UpdaYieldWo">
+
+        <update id="updaBatchWo"  parameterType="list">
+            <foreach collection="list" item="item" index="index" open="begin" close=";end;" separator=";">
+            update MES1.R_MES_MO_T
+            <set>
+           		<if test="item.fct_cd != null and item.fct_cd!= ''">
+           			fct_cd=#{item.fct_cd},
+           		</if>
+           		<if test="item.item_cd != null and item.item_cd != ''">
+           			item_cd=#{item.item_cd},
+           		</if>
+           		<if test="item.plan_strt_dt != null and item.plan_strt_dt != ''">
+           			plan_strt_dt=TO_DATE(#{item.plan_strt_dt},'yyyy-MM-dd HH24:mi:ss'),
+           		</if>
+           		<if test="item.plan_end_dt != null and item.plan_end_dt != ''">
+           			plan_end_dt=TO_DATE(#{item.plan_end_dt},'yyyy-MM-dd HH24:mi:ss'),
+           		</if>
+           		UPT_ID='admin',UPT_DT=SYSDATE
+            </set>
+           <where>
+           		o_no=#{item.o_no}
+           </where>
+            </foreach>
+        </update>
+
+        <insert id="proBomBatch" parameterType="java.util.List">
+    	INSERT INTO
+	    	MES1.R_MES_PRODUCT_BOM_T
+		    	(FCT_CD,BOM_CD,BOM_NM,PRNT_BOM_CD,prnt_bom_nm,USE_YN,VERSION,UNIT_QTY,CRT_ID,CRT_DT)
+		    	(
+		    	 <foreach collection="list" item="item" index="index" separator="union all">
+		    	 	SELECT
+		    	 		'1100',
+			    		'${item.IDNRK}','${item.IDKTX}','${item.MATNR}','${item.MAKTX}',
+			    		'Y','1.0','${item.IDNGE}','admin',sysdate
+
+			    	FROM DUAL
+		    	 </foreach>
+		    	)
+    </insert>
+        <select id="seleBom" parameterType="hashmap" resultType="java.util.HashMap">
+        select * from WO_T_bom where MATNR='${MATNR}'
+        </select>
+    </mapper>

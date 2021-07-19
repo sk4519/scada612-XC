@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+    <mapper namespace="cn.bp.scada.mapper.scada.BatchMat">
+
+	<insert id="addBatchMat" parameterType="list">
+		insert into BATCHMAT(matnr,
+			charg,
+			maktx,
+			ersda,
+			lifnr,
+			name1
+			)
+			(
+		<foreach collection="list" item="item" index="index" separator="union all">
+
+			select
+			#{item.matnr},
+			#{item.charg},
+			#{item.maktx},
+			#{item.ersda},
+			#{item.lifnr},
+			#{item.name1}
+			from DUAL
+		</foreach>
+		)
+	</insert>
+
+        <insert id="addBatchGrp" parameterType="list">
+		insert into ITEM_GRP(ITEM_GRP_CD,ITEM_GRP_NM,CRT_ID,CRT_DT
+			)
+			(
+		<foreach collection="list" item="item" index="index" separator="union all">
+
+			select
+			#{item.mt_matkl},
+			#{item.MT_WGBEZ},
+			'admin',
+			sysdate
+			from DUAL
+		</foreach>
+		)
+	</insert>
+
+        <select id="seleExistsSn" parameterType="hashmap" resultType="string">
+        select AUFNR from PRODUCT_SN n where exists (select aufnr from PRODUCT_SN t where t.aufnr='${I_AUFNR}')
+        </select>
+
+	<select id="queryDeviceBg" resultType="java.util.HashMap">
+		SELECT ET_CD,BG_START FROM IPLANT1.C_IPLANT_E2_T WHERE BG_START IS NOT NULL
+	</select>
+
+	<update id="upDeviceBg" parameterType="string">
+		UPDATE IPLANT1.C_IPLANT_E2_T
+		<set>
+		 BG_START=#{bgDt},
+			STOP_SUM=STOP_SUM+#{stopSum}
+		</set>
+		where ET_CD = #{etCd}
+	</update>
+    </mapper>

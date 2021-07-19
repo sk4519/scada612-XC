@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.bp.scada.mapper.mes.E_SCHEDUL_SETMapper">
+    <resultMap id="BaseResultMap" type="cn.bp.scada.modle.mes.E_SCHEDUL_SET">
+        <constructor>
+            <idArg column="ID" javaType="java.lang.Short" jdbcType="DECIMAL"/>
+            <arg column="TIME" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="LINE_NAME" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="CLASS_NAME" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="STATUS" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="WORK_START_TIME" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+            <arg column="WORK_END_TIME" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+            <arg column="WORK_TIME" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="NOTES" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="CHANGTIME" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+        </constructor>
+    </resultMap>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Short">
+        delete
+        from E_SCHEDUL_SET
+        where ID = #{id,jdbcType=DECIMAL}
+    </delete>
+    <insert id="insert" parameterType="cn.bp.scada.modle.mes.E_SCHEDUL_SET">
+        insert into E_SCHEDUL_SET (ID, TIME, LINE_NAME,
+                                   CLASS_NAME, STATUS, WORK_START_TIME,
+                                   WORK_END_TIME, WORK_TIME, NOTES,
+                                   CHANGTIME)
+        values (#{id,jdbcType=DECIMAL}, #{time,jdbcType=VARCHAR}, #{lineName,jdbcType=VARCHAR},
+                #{className,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{workStartTime,jdbcType=TIMESTAMP},
+                #{workEndTime,jdbcType=TIMESTAMP}, #{workTime,jdbcType=VARCHAR}, #{notes,jdbcType=VARCHAR},
+                #{changtime,jdbcType=TIMESTAMP})
+    </insert>
+    <update id="updateByPrimaryKey" parameterType="cn.bp.scada.modle.mes.E_SCHEDUL_SET">
+        update E_SCHEDUL_SET
+        set TIME            = #{time,jdbcType=VARCHAR},
+            LINE_NAME       = #{lineName,jdbcType=VARCHAR},
+            CLASS_NAME      = #{className,jdbcType=VARCHAR},
+            STATUS          = #{status,jdbcType=VARCHAR},
+            WORK_START_TIME = #{workStartTime,jdbcType=TIMESTAMP},
+            WORK_END_TIME   = #{workEndTime,jdbcType=TIMESTAMP},
+            WORK_TIME       = #{workTime,jdbcType=VARCHAR},
+            NOTES           = #{notes,jdbcType=VARCHAR},
+            CHANGTIME       = #{changtime,jdbcType=TIMESTAMP}
+        where ID = #{id,jdbcType=DECIMAL}
+    </update>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Short" resultMap="BaseResultMap">
+        select ID,
+               TIME,
+               LINE_NAME,
+               CLASS_NAME,
+               STATUS,
+               WORK_START_TIME,
+               WORK_END_TIME,
+               WORK_TIME,
+               NOTES,
+               CHANGTIME
+        from E_SCHEDUL_SET
+        where ID = #{id,jdbcType=DECIMAL}
+    </select>
+    <select id="selectAll" resultMap="BaseResultMap">
+        select ID,
+               TIME,
+               LINE_NAME,
+               CLASS_NAME,
+               STATUS,
+               WORK_START_TIME,
+               WORK_END_TIME,
+               WORK_TIME,
+               NOTES,
+               CHANGTIME
+        from E_SCHEDUL_SET
+        order by status desc
+    </select>
+    <insert id="insertAll" parameterType="cn.bp.scada.modle.mes.E_SCHEDUL_SET">
+        insert into E_SCHEDUL_SET (TIME, LINE_NAME,
+                                   CLASS_NAME, STATUS, WORK_START_TIME,
+                                   WORK_END_TIME, WORK_TIME, CHANGTIME)
+        values (#{time,jdbcType=VARCHAR}, #{lineName,jdbcType=VARCHAR},
+                #{className,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{workStartTime,jdbcType=TIMESTAMP},
+                #{workEndTime,jdbcType=TIMESTAMP}, #{workTime,jdbcType=VARCHAR}, #{changtime,jdbcType=TIMESTAMP})
+    </insert>
+    <insert id="insertDayTime" parameterType="cn.bp.scada.modle.mes.E_SCHEDUL_SET">
+        INSERT INTO MES1.E_SCHEDUL_SET
+        (CLASS_NAME, LINE_NAME, STATUS, TIME,
+         CHANGTIME,
+         WORK_START_TIME,
+         WORK_END_TIME,
+         WORK_TIME)
+            (SELECT T1.CLASS_TYPE                    CLASS_NAME,
+                    T1.MACHINE_LINE_TYPE             LINE_NAME,
+                    T1.CLASS_NAME                    STATUS,
+                    to_char(SYSDATE, 'yyyy/MM/dd')   TIME,
+                    SYSDATE                          CHANGTIME,
+                    TO_DATE(to_char(SYSDATE, 'yyyy/MM/dd') ||
+                            (SELECT DAY_MORNING1 FROM E_TIME_SET WHERE ID = (select MAX(ID) FROM E_TIME_SET)),
+                            'YYYY/MM/DD hh24:mi:ss') WORK_START_TIME,
+                    TO_DATE(to_char(SYSDATE + numtodsinterval(-510, 'minute'), 'yyyy/MM/dd') ||
+                            (SELECT DAY_NIGHT2 FROM E_TIME_SET WHERE ID = (select MAX(ID) FROM E_TIME_SET)),
+                            'YYYY/MM/DD hh24:mi:ss') WORK_END_TIME,
+                    (ROUND(TO_NUMBER(TO_DATE(to_char(SYSDATE + numtodsinterval(-510, 'minute'), 'yyyy/MM/dd') ||
+                                             (SELECT DAY_NIGHT2
+                                              FROM E_TIME_SET
+                                              WHERE ID = (select MAX(ID) FROM E_TIME_SET)),
+                                             'YYYY/MM/DD hh24:mi:ss') - TO_DATE(to_char(SYSDATE, 'yyyy/MM/dd') ||
+                                                                                (SELECT DAY_MORNING1
+                                                                                 FROM E_TIME_SET
+                                                                                 WHERE ID = (select MAX(ID) FROM E_TIME_SET)),
+                                                                                'YYYY/MM/DD hh24:mi:ss')) * 24 * 100) /100 - 2.25)WORK_TIME
+             FROM (SELECT CLASS_TYPE, MACHINE_LINE_TYPE, '生产' CLASS_NAME
+                   FROM E_CLASS_SELECT
+                   where (CONNECT_TIME_SET_ID =(SELECT MAX(CONNECT_TIME_SET_ID) FROM E_CLASS_SELECT))
+                     AND SELECT_STATUS = 1
+                     AND CLASS_TYPE = '白班') T1)
+    </insert>
+    <insert id="insertNightTime" parameterType="cn.bp.scada.modle.mes.E_SCHEDUL_SET">
+        INSERT INTO MES1.E_SCHEDUL_SET
+        (CLASS_NAME, LINE_NAME, STATUS, TIME,
+         CHANGTIME,
+         WORK_START_TIME,
+         WORK_END_TIME,
+         WORK_TIME)
+            (SELECT T1.CLASS_TYPE                    CLASS_NAME,
+                    T1.MACHINE_LINE_TYPE             LINE_NAME,
+                    T1.CLASS_NAME                    STATUS,
+                    to_char(SYSDATE, 'yyyy/MM/dd')   TIME,
+                    SYSDATE                          CHANGTIME,
+                    TO_DATE(to_char(SYSDATE, 'yyyy/MM/dd') ||
+                            (SELECT NIGHT_MORNING1 FROM E_TIME_SET WHERE ID = (select MAX(ID) FROM E_TIME_SET)),
+                            'YYYY/MM/DD hh24:mi:ss') WORK_START_TIME,
+                    TO_DATE(to_char(SYSDATE + numtodsinterval(+1440, 'minute'), 'yyyy/MM/dd') ||
+                            (SELECT NIGHT_NIGHT2 FROM E_TIME_SET WHERE ID = (select MAX(ID) FROM E_TIME_SET)),
+                            'YYYY/MM/DD hh24:mi:ss') WORK_END_TIME,
+                    (ROUND(TO_NUMBER(TO_DATE(to_char(SYSDATE + numtodsinterval(+1440, 'minute'), 'yyyy/MM/dd') ||
+                                             (SELECT NIGHT_NIGHT2
+                                              FROM E_TIME_SET
+                                              WHERE ID = (select MAX(ID) FROM E_TIME_SET)),
+                                             'YYYY/MM/DD hh24:mi:ss') - TO_DATE(to_char(SYSDATE, 'yyyy/MM/dd') ||
+                                                                                (SELECT NIGHT_MORNING1
+                                                                                 FROM E_TIME_SET
+                                                                                 WHERE ID = (select MAX(ID) FROM E_TIME_SET)),
+                                                                                'YYYY/MM/DD hh24:mi:ss')) * 24 * 100) /100 - 1.75)WORK_TIME
+             FROM (SELECT CLASS_TYPE, MACHINE_LINE_TYPE, '生产' CLASS_NAME
+                   FROM E_CLASS_SELECT
+                   WHERE (CONNECT_TIME_SET_ID =(SELECT MAX(CONNECT_TIME_SET_ID) FROM E_CLASS_SELECT))
+                     AND SELECT_STATUS = 1
+                     AND CLASS_TYPE = '夜班') T1)
+    </insert>
+    <update id="updateSSMS" parameterType="cn.bp.scada.modle.mes.E_SCHEDUL_SET">
+        update E_SCHEDUL_SET
+        set MAINTAIN_STATUS = 1
+        where MAINTAIN_STATUS = 0 AND WORK_END_TIME <![CDATA[<=TO_DATE(concat((select to_char(sysdate,'yyyy-MM-dd') from dual), '08:30:00'),'yyyy-MM-dd HH24:mi:ss')]]>
+    </update>
+</mapper>

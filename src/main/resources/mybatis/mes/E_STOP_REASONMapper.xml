@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.bp.scada.mapper.mes.E_STOP_REASONMapper">
+  <resultMap id="BaseResultMap" type="cn.bp.scada.modle.mes.E_STOP_REASON">
+    <constructor>
+      <idArg column="ID" javaType="java.lang.Short" jdbcType="DECIMAL" />
+      <arg column="TIME" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+      <arg column="LINE_NAME" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="CALSS_NAME" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="STOP_START_TIME" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+      <arg column="STOP_END_TIME" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+      <arg column="STOP_TIME" javaType="java.lang.Short" jdbcType="DECIMAL" />
+      <arg column="STOP_REASON1" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="STOP_REASON2" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="NOTES" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="RECORD_STATUS" javaType="java.lang.Short" jdbcType="DECIMAL" />
+      <arg column="MACHINEID" javaType="java.lang.String" jdbcType="VARCHAR" />
+    </constructor>
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Short">
+    delete from E_STOP_REASON
+    where ID = #{id,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="cn.bp.scada.modle.mes.E_STOP_REASON">
+    insert into E_STOP_REASON (ID, TIME, LINE_NAME, 
+      CALSS_NAME, STOP_START_TIME, STOP_END_TIME, 
+      STOP_TIME, STOP_REASON1, STOP_REASON2, 
+      NOTES, RECORD_STATUS, MACHINEID
+      )
+    values (#{id,jdbcType=DECIMAL}, #{time,jdbcType=TIMESTAMP}, #{lineName,jdbcType=VARCHAR}, 
+      #{calssName,jdbcType=VARCHAR}, #{stopStartTime,jdbcType=TIMESTAMP}, #{stopEndTime,jdbcType=TIMESTAMP}, 
+      #{stopTime,jdbcType=DECIMAL}, #{stopReason1,jdbcType=VARCHAR}, #{stopReason2,jdbcType=VARCHAR}, 
+      #{notes,jdbcType=VARCHAR}, #{recordStatus,jdbcType=DECIMAL}, #{machineid,jdbcType=VARCHAR}
+      )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="cn.bp.scada.modle.mes.E_STOP_REASON">
+    update E_STOP_REASON
+    set TIME = #{time,jdbcType=TIMESTAMP},
+      LINE_NAME = #{lineName,jdbcType=VARCHAR},
+      CALSS_NAME = #{calssName,jdbcType=VARCHAR},
+      STOP_START_TIME = #{stopStartTime,jdbcType=TIMESTAMP},
+      STOP_END_TIME = #{stopEndTime,jdbcType=TIMESTAMP},
+      STOP_TIME = #{stopTime,jdbcType=DECIMAL},
+      STOP_REASON1 = #{stopReason1,jdbcType=VARCHAR},
+      STOP_REASON2 = #{stopReason2,jdbcType=VARCHAR},
+      NOTES = #{notes,jdbcType=VARCHAR},
+      RECORD_STATUS = #{recordStatus,jdbcType=DECIMAL},
+      MACHINEID = #{machineid,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=DECIMAL}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Short" resultMap="BaseResultMap">
+    select ID, TIME, LINE_NAME, CALSS_NAME, STOP_START_TIME, STOP_END_TIME, STOP_TIME, 
+    STOP_REASON1, STOP_REASON2, NOTES, RECORD_STATUS, MACHINEID
+    from E_STOP_REASON
+    where ID = #{id,jdbcType=DECIMAL}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select ID, TIME, LINE_NAME, CALSS_NAME, STOP_START_TIME, STOP_END_TIME, STOP_TIME, 
+    STOP_REASON1, STOP_REASON2, NOTES, RECORD_STATUS, MACHINEID
+    from E_STOP_REASON
+    order by status desc
+  </select>
+  <select id="selectMaxID" resultType="short">
+    select max(ID) from E_STOP_REASON
+  </select>
+  <select id="selectNewTime1" parameterType="string" resultType="Date">
+    select MAX(STOP_START_TIME) from E_STOP_REASON WHERE MACHINEID=#{MACHINEID,jdbcType=VARCHAR} and RECORD_STATUS = 0
+  </select>
+  <update id="updateNewTime" parameterType="cn.bp.scada.modle.mes.E_STOP_REASON">
+    update E_STOP_REASON
+    set TIME = #{time,jdbcType=TIMESTAMP},
+        STOP_END_TIME = #{stopEndTime,jdbcType=TIMESTAMP},
+        STOP_TIME = #{stopTime,jdbcType=DECIMAL},
+        RECORD_STATUS = #{recordStatus,jdbcType=DECIMAL}
+    where ID =(select MAX(ID) from E_STOP_REASON WHERE MACHINEID=#{machineid,jdbcType=VARCHAR} and RECORD_STATUS = 0)
+  </update>
+  <update id="updateStopStartTime" parameterType="cn.bp.scada.modle.mes.E_STOP_REASON">
+    update E_STOP_REASON
+    set  STOP_START_TIME = #{stopStartTime,jdbcType=TIMESTAMP}
+    where ID =(select MAX(ID) from E_STOP_REASON WHERE MACHINEID=#{machineid,jdbcType=VARCHAR} and RECORD_STATUS = 0)
+  </update>
+  <delete id="deleteMaxRecord" parameterType="string">
+    delete from E_STOP_REASON
+    where ID = (select MAX(ID) from E_STOP_REASON WHERE MACHINEID=#{machineid,jdbcType=VARCHAR} and RECORD_STATUS = 0)
+  </delete>
+  <insert id="insertnew1" parameterType="cn.bp.scada.modle.mes.E_STOP_REASON">
+    insert into E_STOP_REASON (TIME, LINE_NAME,
+                               CALSS_NAME, STOP_START_TIME,
+                               RECORD_STATUS, MACHINEID
+    )
+    values  (#{time,jdbcType=TIMESTAMP}, #{lineName,jdbcType=VARCHAR},
+            #{calssName,jdbcType=VARCHAR}, #{stopStartTime,jdbcType=TIMESTAMP},
+             #{recordStatus,jdbcType=DECIMAL}, #{machineid,jdbcType=VARCHAR}
+           )
+  </insert>
+  <update id="updateSRMS" parameterType="cn.bp.scada.modle.mes.E_STOP_REASON">
+    update E_STOP_REASON
+    set LIMIT_STATUS = 1
+    where LIMIT_STATUS = 0 AND STOP_END_TIME <![CDATA[<=TO_DATE(concat((select to_char(sysdate,'yyyy-MM-dd') from dual), '08:30:00'),'yyyy-MM-dd HH24:mi:ss')]]>
+  </update>
+</mapper>

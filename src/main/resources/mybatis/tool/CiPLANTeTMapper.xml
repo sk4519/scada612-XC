@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.bp.scada.mapper.scada.CiPLANTeTMapper">
+  <resultMap id="BaseResultMap" type="cn.bp.scada.modle.scada.CiPLANTeT">
+    <constructor>
+      <idArg column="ET_CD" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="ET_NM" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="ET_UT" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="ET_MT" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="ET_MD" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+      <arg column="ET_QT" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="ET_PT" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+      <arg column="ET_PW" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="DICT_IT" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="PL_CD" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="LC_CD" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="ET_TT" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="ET_ST" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="ET_LT" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="ET_PL" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="CRT_ID" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="CRT_DT" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+      <arg column="CRT_IP" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="UPT_ID" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="UPT_DT" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+      <arg column="UPT_IP" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="ET_RES" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="RQ_SN" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="LINE_CD" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="ROUT_CD" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="ET_QTY" javaType="java.lang.Short" jdbcType="DECIMAL" />
+      <arg column="ET_RT" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
+      <arg column="MAT_TYPE" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="ET_STA" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="IS_READ" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="DEV_START" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="DEV_END" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="BG_START" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="BG_END" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="BG_MSG" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="PRO_START" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="PRO_END" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="CT" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="STD_TM" javaType="java.lang.Short" jdbcType="DECIMAL" />
+    </constructor>
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from C_IPLANT_E2_T
+    where ET_CD = #{etCd,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="cn.bp.scada.modle.scada.CiPLANTeT">
+    insert into C_IPLANT_E2_T (ET_CD, ET_NM, ET_UT,
+      ET_MT, ET_MD, ET_QT,
+      ET_PT, ET_PW, DICT_IT,
+      PL_CD, LC_CD, ET_TT, ET_ST,
+      ET_LT, ET_PL, CRT_ID,
+      CRT_DT, CRT_IP, UPT_ID,
+      UPT_DT, UPT_IP, ET_RES,
+      RQ_SN, LINE_CD, ROUT_CD,
+      ET_QTY, ET_RT, MAT_TYPE,
+      ET_STA, IS_READ, DEV_START,
+      DEV_END, BG_START, BG_END,
+      BG_MSG, PRO_START, PRO_END,
+      CT, STD_TM)
+    values (#{etCd,jdbcType=VARCHAR}, #{etNm,jdbcType=VARCHAR}, #{etUt,jdbcType=VARCHAR},
+      #{etMt,jdbcType=VARCHAR}, #{etMd,jdbcType=TIMESTAMP}, #{etQt,jdbcType=VARCHAR},
+      #{etPt,jdbcType=TIMESTAMP}, #{etPw,jdbcType=VARCHAR}, #{dictIt,jdbcType=VARCHAR},
+      #{plCd,jdbcType=VARCHAR}, #{lcCd,jdbcType=VARCHAR}, #{etTt,jdbcType=VARCHAR}, #{etSt,jdbcType=VARCHAR},
+      #{etLt,jdbcType=VARCHAR}, #{etPl,jdbcType=VARCHAR}, #{crtId,jdbcType=VARCHAR},
+      #{crtDt,jdbcType=TIMESTAMP}, #{crtIp,jdbcType=VARCHAR}, #{uptId,jdbcType=VARCHAR},
+      #{uptDt,jdbcType=TIMESTAMP}, #{uptIp,jdbcType=VARCHAR}, #{etRes,jdbcType=VARCHAR},
+      #{rqSn,jdbcType=VARCHAR}, #{lineCd,jdbcType=VARCHAR}, #{routCd,jdbcType=VARCHAR},
+      #{etQty,jdbcType=DECIMAL}, #{etRt,jdbcType=DECIMAL}, #{matType,jdbcType=VARCHAR},
+      #{etSta,jdbcType=VARCHAR}, #{isRead,jdbcType=VARCHAR}, #{devStart,jdbcType=VARCHAR},
+      #{devEnd,jdbcType=VARCHAR}, #{bgStart,jdbcType=VARCHAR}, #{bgEnd,jdbcType=VARCHAR},
+      #{bgMsg,jdbcType=VARCHAR}, #{proStart,jdbcType=VARCHAR}, #{proEnd,jdbcType=VARCHAR},
+      #{ct,jdbcType=VARCHAR}, #{stdTm,jdbcType=DECIMAL})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="java.util.HashMap">
+    update IPLANT1.C_IPLANT_E2_T
+    <trim prefix="set" suffixOverrides=",">
+      <if test="BG_START!=null and BG_START!='' ">
+        BG_START = #{BG_START},
+      </if>
+
+        BG_END = #{BG_END},
+
+      <if test="BG_MSG!=null and BG_MSG!='' ">
+        BG_MSG = #{BG_MSG},
+      </if>
+      <if test="ET_STA!=null and ET_STA!='' ">
+        ET_STA = #{ET_STA},
+      </if>
+
+      CRT_ID = 'admin',
+      UPT_DT = sysdate,
+    </trim>
+    where ET_CD = #{ET_CD}
+  </update>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select ET_CD, ET_NM, ET_UT, ET_MT, ET_MD, ET_QT, ET_PT, ET_PW, DICT_IT, PL_CD, LC_CD,
+    ET_TT, ET_ST, ET_LT, ET_PL, CRT_ID, CRT_DT, CRT_IP, UPT_ID, UPT_DT, UPT_IP, ET_RES,
+    RQ_SN, LINE_CD, ROUT_CD, ET_QTY, ET_RT, MAT_TYPE, ET_STA, IS_READ, DEV_START, DEV_END,
+    BG_START, BG_END, BG_MSG, PRO_START, PRO_END, CT, STD_TM
+    from C_IPLANT_E2_T
+    where ET_CD = #{etCd,jdbcType=VARCHAR}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select ET_CD, ET_NM, ET_UT, ET_MT, ET_MD, ET_QT, ET_PT, ET_PW, DICT_IT, PL_CD, LC_CD,
+    ET_TT, ET_ST, ET_LT, ET_PL, CRT_ID, CRT_DT, CRT_IP, UPT_ID, UPT_DT, UPT_IP, ET_RES,
+    RQ_SN, LINE_CD, ROUT_CD, ET_QTY, ET_RT, MAT_TYPE, ET_STA, IS_READ, DEV_START, DEV_END,
+    BG_START, BG_END, BG_MSG, PRO_START, PRO_END, CT, STD_TM
+    from C_IPLANT_E2_T
+  </select>
+
+  <select id="selectMO" resultType="int">
+    SELECT COUNT(1) AS LINE FROM(
+    SELECT COUNT(1) FROM MES1.R_MES_MO_BC_T WHERE crT_dt >= trunc(sysdate) and crT_dt <![CDATA[<]]> trunc(sysdate)+1
+    GROUP BY MO_NO)
+  </select>
+
+  <update id="updateEt" parameterType="int" >
+    UPDATE IPLANT1.C_IPLANT_E2_T SET ET_ST = #{etSt} WHERE ET_CD = 'ECDLC005'
+
+  </update>
+</mapper>

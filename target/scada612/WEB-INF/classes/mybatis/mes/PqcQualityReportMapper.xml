@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.bp.scada.mapper.mes.PqcQualityReportMapper">
+  <resultMap id="BaseResultMap" type="cn.bp.scada.modle.mes.PqcQualityReport">
+    <constructor>
+      <idArg column="ID" javaType="java.lang.Integer" jdbcType="DECIMAL" />
+      <arg column="SN_NO_1" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="IS_SECRECY" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="ORDER_NO_1" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="PROD_MODEL" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="PO_QTY" javaType="java.lang.Integer" jdbcType="DECIMAL" />
+      <arg column="SCHEDULING_DT" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+      <arg column="INSTRUCT_NO" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="LINE_CD" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="CRT_ID" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="CRT_DT" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+      <arg column="UPT_ID" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="UPT_DT" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+      <arg column="FAULT_DESCRIPTION_1" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="REMARKS" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="TEST_RESULTS_1" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="SN_NO_2" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="ORDER_NO_2" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="TEST_RESULTS_2" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="FAULT_DESCRIPTION_2" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="BUTTON" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="NEXT_ONE" javaType="java.lang.String" jdbcType="VARCHAR" />
+    </constructor>
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from MES1.PQC_QUALITY_REPORT
+    where ID = #{id,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="cn.bp.scada.modle.mes.PqcQualityReport" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+    insert into MES1.PQC_QUALITY_REPORT (ID, SN_NO_1, IS_SECRECY,
+      ORDER_NO_1, PROD_MODEL, PO_QTY,
+      SCHEDULING_DT, INSTRUCT_NO, LINE_CD,
+      CRT_ID, CRT_DT, UPT_ID,
+      UPT_DT, FAULT_DESCRIPTION_1, REMARKS,
+      TEST_RESULTS_1, SN_NO_2, ORDER_NO_2,
+      TEST_RESULTS_2, FAULT_DESCRIPTION_2, BUTTON,NEXT_ONE
+      )
+    <selectKey resultType ="java.lang.Integer"  keyProperty="id" order="BEFORE">
+       select PQC_QUALITY_REPORT_SEQ.Nextval FROM DUAL
+    </selectKey>
+    values (#{id,jdbcType=DECIMAL}, #{snNo1,jdbcType=VARCHAR}, #{isSecrecy,jdbcType=VARCHAR},
+      #{orderNo1,jdbcType=VARCHAR}, #{prodModel,jdbcType=VARCHAR}, #{poQty,jdbcType=DECIMAL},
+      #{schedulingDt,jdbcType=TIMESTAMP}, #{instructNo,jdbcType=VARCHAR}, #{lineCd,jdbcType=VARCHAR},
+      #{crtId,jdbcType=VARCHAR}, SYSDATE, #{uptId,jdbcType=VARCHAR},
+      #{uptDt,jdbcType=TIMESTAMP}, #{faultDescription1,jdbcType=VARCHAR}, #{remarks,jdbcType=VARCHAR},
+      #{testResults1,jdbcType=VARCHAR}, #{snNo2,jdbcType=VARCHAR}, #{orderNo2,jdbcType=VARCHAR},
+      #{testResults2,jdbcType=VARCHAR}, #{faultDescription2,jdbcType=VARCHAR}, #{button,jdbcType=VARCHAR},
+      #{nextOne,jdbcType=VARCHAR}
+      )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="cn.bp.scada.modle.mes.PqcQualityReport">
+    update MES1.PQC_QUALITY_REPORT
+    set SN_NO_1 = #{snNo1,jdbcType=VARCHAR},
+      IS_SECRECY = #{isSecrecy,jdbcType=VARCHAR},
+      ORDER_NO_1 = #{orderNo1,jdbcType=VARCHAR},
+      PROD_MODEL = #{prodModel,jdbcType=VARCHAR},
+      PO_QTY = #{poQty,jdbcType=DECIMAL},
+      SCHEDULING_DT = #{schedulingDt,jdbcType=TIMESTAMP},
+      INSTRUCT_NO = #{instructNo,jdbcType=VARCHAR},
+      LINE_CD = #{lineCd,jdbcType=VARCHAR},
+      UPT_ID = #{uptId,jdbcType=VARCHAR},
+      UPT_DT = SYSDATE,
+      FAULT_DESCRIPTION_1 = #{faultDescription1,jdbcType=VARCHAR},
+      REMARKS = #{remarks,jdbcType=VARCHAR},
+      TEST_RESULTS_1 = #{testResults1,jdbcType=VARCHAR},
+      SN_NO_2 = #{snNo2,jdbcType=VARCHAR},
+      ORDER_NO_2 = #{orderNo2,jdbcType=VARCHAR},
+      TEST_RESULTS_2 = #{testResults2,jdbcType=VARCHAR},
+      FAULT_DESCRIPTION_2 = #{faultDescription2,jdbcType=VARCHAR},
+      BUTTON = #{button,jdbcType=VARCHAR},
+      NEXT_ONE = #{nextOne,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=DECIMAL}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select ID, SN_NO_1, IS_SECRECY, ORDER_NO_1, PROD_MODEL, PO_QTY, SCHEDULING_DT, INSTRUCT_NO,
+    LINE_CD, CRT_ID, CRT_DT, UPT_ID, UPT_DT, FAULT_DESCRIPTION_1, REMARKS, TEST_RESULTS_1,
+    SN_NO_2, ORDER_NO_2, TEST_RESULTS_2, FAULT_DESCRIPTION_2, BUTTON
+    from MES1.PQC_QUALITY_REPORT
+    where ID = #{id,jdbcType=DECIMAL}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select ID, SN_NO_1, IS_SECRECY, ORDER_NO_1, PROD_MODEL, PO_QTY, SCHEDULING_DT, INSTRUCT_NO,
+    LINE_CD, CRT_ID, CRT_DT, UPT_ID, UPT_DT, FAULT_DESCRIPTION_1, REMARKS, TEST_RESULTS_1,
+    SN_NO_2, ORDER_NO_2, TEST_RESULTS_2, FAULT_DESCRIPTION_2, BUTTON
+    from MES1.PQC_QUALITY_REPORT
+  </select>
+  
+  <select id="selectBysnNo" parameterType="java.lang.String" resultType="java.lang.Integer">
+    select ID  from MES1.PQC_QUALITY_REPORT  WHERE SN_NO_1 = #{_parameter}
+  </select>
+  
+</mapper>

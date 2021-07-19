@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: cn.yanzx-dev.gitlab:com.sap.conn.jco.sapjco:3.0.14">
+    <CLASSES>
+      <root url="jar://D:/Repositories/Maven/cn/yanzx-dev/gitlab/com.sap.conn.jco.sapjco/3.0.14/com.sap.conn.jco.sapjco-3.0.14.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://D:/Repositories/Maven/cn/yanzx-dev/gitlab/com.sap.conn.jco.sapjco/3.0.14/com.sap.conn.jco.sapjco-3.0.14-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://D:/Repositories/Maven/cn/yanzx-dev/gitlab/com.sap.conn.jco.sapjco/3.0.14/com.sap.conn.jco.sapjco-3.0.14-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
