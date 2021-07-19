@@ -140,7 +140,6 @@ public class SapMaintProdcMsg extends JdbcDaoSupport{
 				JSONObject test = new JSONObject();
 				test.put("IFS", "STA71");
 				test.put("PRODUCTSN", sn);
-
 				JSONArray jsonArrayTest = mesApiUtils.doPost2(test);
 				LOG.info("产品档案反写条码给测试程序："+jsonArrayTest);
 				List<Object> params = new ArrayList<>();
