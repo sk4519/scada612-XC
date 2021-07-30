@@ -331,6 +331,10 @@ public class SapMaintProdcMsg extends JdbcDaoSupport{
 						table.setValue("LCPN", typePQn[1]);    //浪潮PN
 					}else if(typePQn[2].equals("LCPN")) {
 						table.setValue("LCPN", typePQn[1]);    //浪潮PN
+					}else if(typePQn[2].equals("YCSN")) {
+						table.setValue("YCQN", typePQn[0]);    //原厂SN
+						table.setValue("QN", typePQn[0]);      //散件QN
+						table.setValue("LCPN", typePQn[1]);    //浪潮PN
 					}
 					table.setValue("SCSJ", ph.getDates());    //生产时间
 					table.setValue("GPSJ", ph.getDates());    //改配时间
