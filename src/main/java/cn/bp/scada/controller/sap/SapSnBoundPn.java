@@ -4,18 +4,19 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
+import com.fasterxml.jackson.databind.util.JSONPObject;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sap.conn.jco.JCoDestination;
@@ -52,9 +53,10 @@ public class SapSnBoundPn extends JdbcDaoSupport{
 		//入参
 				JCoParameterList parameterList = function.getImportParameterList();
 			//设置入参
-				String sqlMax = "select max(t.erdate) cdte from YCSN_MATERIAL t";
+				String sqlMax = "select t.erdate cdte,ycqn from YCSN_MATERIAL t where erdate=(select max(erdate) from ycsn_material) and rownum=1";
 				Map<String, Object> queryForMap = this.getJdbcTemplate().queryForMap(sqlMax);
-				Object object = queryForMap.get("cdte");
+			    Object object = queryForMap.get("cdte");
+			    Object object1 = queryForMap.get("YCQN");
 				String st ="";
 				if(object == null) {
 					st="20170927000000";
@@ -66,7 +68,8 @@ public class SapSnBoundPn extends JdbcDaoSupport{
 
 				parameterList.setValue("BEGINDATE", st+""); //开始日期
 				parameterList.setValue("ENDDATE", "20990927"); //结束日期
-				function.execute(jCoDestination);
+			//parameterList.setValue("YCSN", "2L0300105975"); //物料名称
+			function.execute(jCoDestination);
 			parameterList.clear();
 
 			String sql ="insert into YCSN_MATERIAL(matnr,charg,ycqn,maktx,erdate)"
@@ -78,18 +81,66 @@ public class SapSnBoundPn extends JdbcDaoSupport{
 			for (int i = 0; i < table.getNumRows(); i++) {
 				YCSNOrPN yp = new YCSNOrPN();
 				table.setRow(i);
+				String ycsn=table.getString("YCQN");
+				if (!ycsn.equals(object1.toString())){
 				yp.setMatnr(table.getString("MATNR"));  //物料编号
 				yp.setCharg(table.getString("CHARG"));  //批号
-				 yp.setYcqn(table.getString("YCQN"));   //原厂SN
+				yp.setYcqn(ycsn);   //原厂SN
 				yp.setMaktx(table.getString("MAKTX"));  //物料描述
 			   yp.setErdate(table.getString("ERDAT") +table.getString("ERZEIT")); //创建日期
-			   list.add(yp);
+			   list.add(yp);}
 			}
 			insertBatchYCSN(sql,list);
 		}catch (JCoException e){
 			System.out.println(e.toString());
 			}
 		return "ok";
+	}
+	//手动获取原厂sn
+	@RequestMapping("/sapGainYcsnByHand")
+	public JSONPObject snBoundPnByHand(HttpServletRequest req, String data){
+		Map<String, Object> map = new HashMap<>();
+		String name = req.getParameter("callbackparam");//获取到jsonp的函数名
+		JSONObject json = new JSONObject(data);
+		String ycsnNo = json.getString("ycsnNo");
+		System.out.println("进入手动同步原厂SN接口，入参："+ycsnNo);
+		try {
+			JCoDestination jCoDestination = sapUtils.jCoDestination;//接收连接对象
+			JCoFunction function = sapUtils.getFunction("ZRFC_PP_YCSN_MATERIAL");//获取到函数
+			//入参
+			JCoParameterList parameterList = function.getImportParameterList();
+			//设置入参
+			String sqlMax = "select COUNT(1) from YCSN_MATERIAL where ycqn='"+ycsnNo+"'";
+			Map<String, Object> queryForMap = this.getJdbcTemplate().queryForMap(sqlMax);
+			if(Integer.parseInt(queryForMap.get("COUNT(1)").toString())!=0){
+				return new JSONPObject(name, "已经存在系统中，请勿重复同步！");
+			}
+			parameterList.setValue("YCSN", ycsnNo); //物料名称
+			function.execute(jCoDestination);
+			parameterList.clear();
+			String sql ="insert into YCSN_MATERIAL(matnr,charg,ycqn,maktx,erdate)"
+					+ "values(?,?,?,?,to_date(?,'yyyy-mm-dd hh24:mi:ss'))";
+			final List<YCSNOrPN> list= new ArrayList<YCSNOrPN>();
+			JCoTable  table = function.getTableParameterList().getTable("ET_TAB");//获取表
+			System.out.println("原厂SN绑定条数为："+table.getNumRows());
+			if(table.getNumRows()==0){
+				return new JSONPObject(name, "sap中没有对应维护数据，请联系仓库维护！");
+			}
+			for (int i = 0; i < table.getNumRows(); i++) {
+				YCSNOrPN yp = new YCSNOrPN();
+				table.setRow(i);
+				yp.setMatnr(table.getString("MATNR"));  //物料编号
+				yp.setCharg(table.getString("CHARG"));  //批号
+				yp.setYcqn(table.getString("YCQN"));   //原厂SN
+				yp.setMaktx(table.getString("MAKTX"));  //物料描述
+				yp.setErdate(table.getString("ERDAT") + table.getString("ERZEIT")); //创建日期
+				list.add(yp);
+			}
+			insertBatchYCSN(sql,list);
+		}catch (JCoException e){
+			System.out.println(e.toString());
+		}
+		return new JSONPObject(name, ycsnNo+"物料，同步成功！");
 	}
 
 	public void insertBatchYCSN(String sql,final List<YCSNOrPN> listItem){
