@@ -70,7 +70,7 @@ public class SapConnUtils {
 	        // SAP ROUTER
 	        connectProperties.setProperty(DestinationDataProvider.JCO_SAPROUTER, sapBean.getJCO_SAPROUTER());
 
-	        //createDataFile(ABAP_AS_POOLED, "jcoDestination", connectProperties);
+	        createDataFile(ABAP_AS_POOLED, "jcoDestination", connectProperties);
 	    }
 
 	    /**
