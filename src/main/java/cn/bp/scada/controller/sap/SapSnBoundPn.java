@@ -47,7 +47,7 @@ public class SapSnBoundPn extends JdbcDaoSupport {
      *
      * @return
      */
-    @Scheduled(fixedDelay = 360000) //定时任务，间隔执行，每6分钟
+    @Scheduled(fixedDelay=1000*60*60*2) //定时任务，间隔执行，每2小时
     public String snBoundPn() {
 
         System.out.println("进入原厂SN集中绑定浪潮PN接口:");
