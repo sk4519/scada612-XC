@@ -47,7 +47,7 @@ public class SapSnBoundPn extends JdbcDaoSupport {
      *
      * @return
      */
-    @Scheduled(fixedDelay=1000*60*60*2) //定时任务，间隔执行，每2小时
+    @Scheduled(fixedDelay = 1000*60*60*2) //定时任务，间隔执行，每6分钟
     public String snBoundPn() {
 
         System.out.println("进入原厂SN集中绑定浪潮PN接口:");
@@ -72,7 +72,7 @@ public class SapSnBoundPn extends JdbcDaoSupport {
             LOG.info("原厂SN绑定条数起始日期：" + st);
 
             parameterList.setValue("BEGINDATE",  st+""); //开始日期
-            parameterList.setValue("ENDDATE", "2021080200000"); //结束日期
+            parameterList.setValue("ENDDATE", "2029080200000"); //结束日期
             //parameterList.setValue("YCSN", ""); //物料名称
             function.execute(jCoDestination);
             parameterList.clear();
