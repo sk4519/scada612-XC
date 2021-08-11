@@ -262,7 +262,7 @@ public class ScadaPackController extends JdbcDaoSupport {
      * @param
      * @return
      */
-    @Scheduled(fixedDelay = 600000) //定时任务，间隔执行，每5分钟
+    @Scheduled(fixedDelay = 1000*60*60*2) //定时任务，间隔执行，每2小时
     public void dynamicRepairSn() {
         LOG.info("《《《《《  进入动态循环报工  》》》》》");
         String s = scadaPackService.repairSnDynamic();
