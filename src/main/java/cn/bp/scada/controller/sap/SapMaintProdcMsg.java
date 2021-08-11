@@ -92,7 +92,7 @@ public class SapMaintProdcMsg extends JdbcDaoSupport{
 		 try {
 		if(jsonArray.length()>0) {
 		JCoDestination jCoDestination = sapUtils.jCoDestination;//接收连接对象
-		JCoFunction function = sapUtils.getFunction("ZPP_UPD_ZCPDA");//获取到函数
+		JCoFunction function = sapUtils.getFunction("ZPP_UPD_ZCPDAT");//获取到函数
 		JCoTable table = function.getTableParameterList().getTable("TBL_ZCPDA");
 		String times=null;
 		for (int i = 0; i < jsonArray.length(); i++) {
