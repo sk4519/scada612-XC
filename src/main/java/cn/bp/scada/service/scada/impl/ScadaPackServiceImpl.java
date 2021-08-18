@@ -645,13 +645,19 @@ public class ScadaPackServiceImpl implements ScadaPackService {
             for (int i = 0; i < strarray.length; i++) {
                 if (strarray[i].length() == 9) {
                     String result = confir.cpletionConfirAll(strarray[i], "50", function, jCoDestination);//完工确认
-                    if (result.equals("操作失败")) {
+                    if (result.equals("操作失败")||result.length()>6 ) {
                         failureNum++;
                         failureMsg.append("<br/>" + failureNum + "、序列号 " + strarray[i] + " 报工失败！");
+                        String sql = "UPDATE PRODUCT_SN SET STATE=1 ,UP_DT=sysdate,DES=? WHERE SERNR=?";
+                        template.update(sql, result, strarray[i]);
+                        String insertSql = "INSERT INTO DEMO_YUAN(INFO,SN,RECORD_TIME) VALUES (?,?,sysdate)";
+                        template.update(insertSql,result,strarray[i]);
+                        // template.update(insertSql, result, workSn);
+                        log.info("插入到动态报工： SN为"+strarray[i]+"  sap返回结果为："+result);
                     } else {
                         try {
                             String sql = "UPDATE PRODUCT_SN SET STATE=1 ,UP_DT=sysdate,DES=? WHERE SERNR=?";
-                            template.update(sql, result, data);
+                            template.update(sql, result, strarray[i]);
                         } catch (DataAccessException e) {
                             e.printStackTrace();
                             failureNum++;

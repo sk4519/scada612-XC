@@ -9,6 +9,7 @@ import java.util.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import cn.bp.scada.common.utils.data.DateUtils;
 import com.fasterxml.jackson.databind.util.JSONPObject;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -39,6 +40,8 @@ public class SapSnBoundPn extends JdbcDaoSupport {
 
     @Autowired
     private SapConnUtils sapUtils;
+    @Autowired
+    private DateUtils nowDate;
 
     private Logger LOG = LoggerFactory.getLogger(this.getClass());
 
@@ -47,7 +50,7 @@ public class SapSnBoundPn extends JdbcDaoSupport {
      *
      * @return
      */
-    @Scheduled(fixedDelay = 1000*60*60*2) //定时任务，间隔执行，每2小时
+    @Scheduled(cron = "0 0 1 * * ?") //凌晨1点执行
     public String snBoundPn() {
 
         System.out.println("进入原厂SN集中绑定浪潮PN接口:");
@@ -63,16 +66,17 @@ public class SapSnBoundPn extends JdbcDaoSupport {
             Object object = queryForMap.get("cdte");
             Object object1 = queryForMap.get("YCQN");
             String st = "";
+            long st1=Long.parseLong(nowDate.dateTime())-1;
             if (object == null) {
                 st = "20170927000000";
             } else {
                 st = Long.parseLong(getDateStr(object.toString())) + "";
 
             }
-            LOG.info("原厂SN绑定条数起始日期：" + st);
+            LOG.info("原厂SN绑定条数起始日期：" + st1);
 
-            parameterList.setValue("BEGINDATE",  st+""); //开始日期
-            parameterList.setValue("ENDDATE", "2029080200000"); //结束日期
+            parameterList.setValue("BEGINDATE",  st1+"000000"); //开始日期
+            parameterList.setValue("ENDDATE", st1+"000000"); //结束日期
             //parameterList.setValue("YCSN", ""); //物料名称
             function.execute(jCoDestination);
             parameterList.clear();
@@ -88,16 +92,16 @@ public class SapSnBoundPn extends JdbcDaoSupport {
                 YCSNOrPN yp = new YCSNOrPN();
                 table.setRow(i);
                 long timeDate = Long.parseLong(table.getString("ERDAT") + table.getString("ERZEIT"));
-                if (beginTime <= timeDate) {
-                    if (!object1.toString().equals(table.getString("YCQN"))) {
+                //if (beginTime <= timeDate) {
+                    //if (!object1.toString().equals(table.getString("YCQN"))) {
                         yp.setMatnr(table.getString("MATNR"));  //物料编号
                         yp.setCharg(table.getString("CHARG"));  //批号
                         yp.setYcqn(table.getString("YCQN"));   //原厂SN
                         yp.setMaktx(table.getString("MAKTX"));  //物料描述
                         yp.setErdate(table.getString("ERDAT") + table.getString("ERZEIT")); //创建日期
                         list.add(yp);
-                    }
-                }
+                   // }
+               // }
             }
             LOG.info("原厂SN实际list插入条数为：" + list.size());
             insertBatchYCSN(sql, list);
