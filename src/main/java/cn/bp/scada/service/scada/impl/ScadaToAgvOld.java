@@ -78,64 +78,70 @@ public class ScadaToAgvOld extends JdbcDaoSupport {
 
         JSONObject deviceRequest = new JSONObject(msg.toString());
         LOG.info("产品上老化架，收到的上位机信息：" + deviceRequest);
-         int i = ciPLANTeTMapper.selectMO();
-         int res = ciPLANTeTMapper.updateEt(i);
+        int i = ciPLANTeTMapper.selectMO();
+        int res = ciPLANTeTMapper.updateEt(i);
         JSONObject reqDataDetail = new JSONObject();
         JSONObject responseData = null;
         String line = null;
         try {
-           if(deviceRequest.getString("device_sn") .equals("ECDLC027")) {
+            if (deviceRequest.getString("device_sn").equals("ECDLC027")) {
                 line = "LCLINE001";
-           } else {
-               line = "LCLINE002";
-           }
-          String staSql="SELECT COUNT(1) STACOUNT FROM OLDTEST_STATION WHERE LINE_CD= ? AND SHELF_ID IS NOT NULL";
+            } else {
+                line = "LCLINE002";
+            }
+            String staSql = "SELECT COUNT(1) STACOUNT FROM OLDTEST_STATION WHERE LINE_CD= ? AND SHELF_ID IS NOT NULL";
             Map<String, Object> map1 = template.queryForMap(staSql, line);
             //判断必须存在一个老化架才进行之后的逻辑，否则返回此地方无老化架，防止解绑
-            if(Integer.parseInt(map1.get("STACOUNT").toString()) > 0) {
+            if (Integer.parseInt(map1.get("STACOUNT").toString()) > 0) {
 
 
-            reqDataDetail.put("IN_VEHICLES", deviceRequest.getString("con_sn"));
-            reqDataDetail.put("IN_ET_CD", deviceRequest.getString("device_sn"));
-            reqDataDetail.put("IN_TUS", "2"); //代表要查两个货架满
+                reqDataDetail.put("IN_VEHICLES", deviceRequest.getString("con_sn"));
+                reqDataDetail.put("IN_ET_CD", deviceRequest.getString("device_sn"));
+                reqDataDetail.put("IN_TUS", "2"); //代表要查两个货架满
 
 
-            if (redisUtils.get("iscg").toString().equals("OK")) { //是参观模式
-                reqDataDetail.put("IFS", "STAS422");
-                responseData = mesApiUtils.doPost(reqDataDetail);
-            } else {
-                reqDataDetail.put("IFS", "STAS42");
-                responseData = mesApiUtils.doPost(reqDataDetail);
-            }
-
-
-            if (responseData.getString("CODE").equals("0")) {
-                result.setResult_flag("OK");
-                result.setResult_message(responseData.getString("MSG"));
-                switch (responseData.getString("STATION")) {
-                    case "C0101":
-                        result.setFrame_stion("B"); //老化架位置
-                        break;
-                    case "C0103":
-                        result.setFrame_stion("B"); //老化架位置
-                        break;
-                    default:
-                        result.setFrame_stion("A"); //老化架位置
-                        break;
+                if (redisUtils.get("iscg").toString().equals("OK")) { //是参观模式
+                    reqDataDetail.put("IFS", "STAS422");
+                    responseData = mesApiUtils.doPost(reqDataDetail);
+                } else {
+                    reqDataDetail.put("IFS", "STAS42");
+                    responseData = mesApiUtils.doPost(reqDataDetail);
                 }
 
-                result.setMaterial_stion(responseData.getString("LOCATION")); //产品所在位置
 
-            } else if (responseData.getString("CODE").equals("1")) {
-                result.setResult_flag("NG");
-                result.setResult_message(responseData.getString("MSG"));
-            } else if (responseData.getString("CODE").equals("2")) {
-                result.setResult_flag("OK");
-                result.setResult_message("NO");
-            } else {
+                if (responseData.getString("CODE").equals("0")) {
+                    result.setResult_flag("OK");
+                    result.setResult_message(responseData.getString("MSG"));
+                    switch (responseData.getString("STATION")) {
+                        case "C0101":
+                            result.setFrame_stion("B"); //老化架位置
+                            break;
+                        case "C0103":
+                            result.setFrame_stion("B"); //老化架位置
+                            break;
+                        default:
+                            result.setFrame_stion("A"); //老化架位置
+                            break;
+                    }
 
-                while (true) {
-                    LOG.info(responseData.getString("MSG") + ",等待AGV补充货架，while循环,设备编码：" + deviceRequest.getString("device_sn"));
+                    result.setMaterial_stion(responseData.getString("LOCATION")); //产品所在位置
+
+                } else if (responseData.getString("CODE").equals("1")) {
+                    result.setResult_flag("1");//执行方法异常
+                    result.setResult_message(responseData.getString("MSG"));
+                } else if (responseData.getString("CODE").equals("2")) {
+                    result.setResult_flag("2");
+                    result.setResult_message("NO");
+                } else if (responseData.getString("CODE").equals("4")) {
+                    result.setResult_flag("4");
+                    result.setResult_message("NO");
+                } else if (responseData.getString("CODE").equals("5")) {
+                    result.setResult_flag("5");
+                    result.setResult_message("NO");
+                } else {
+
+                    while (true) {
+                        LOG.info(responseData.getString("MSG") + ",等待AGV补充货架，while循环,设备编码：" + deviceRequest.getString("device_sn"));
 
                         try {
                             Thread.sleep(15000);
@@ -154,42 +160,39 @@ public class ScadaToAgvOld extends JdbcDaoSupport {
 
                             break;
                         }
+                    }
+
+                    //reqDataDetail.put("IFS", "STAS42");
+                    reqDataDetail.put("IN_VEHICLES", deviceRequest.getString("con_sn"));
+                    reqDataDetail.put("IN_ET_CD", deviceRequest.getString("device_sn"));
+                    reqDataDetail.put("IN_TUS", "2"); //代表查一次
 
 
+                    JSONObject responseDataTwo = mesApiUtils.doPost(reqDataDetail);
+                    switch (responseDataTwo.getString("STATION")) {
+                        case "C0101":
+                            result.setFrame_stion("B"); //老化架位置
+                            break;
+                        case "C0103":
+                            result.setFrame_stion("B"); //老化架位置
+                            break;
+                        default:
+                            result.setFrame_stion("A"); //老化架位置
+                            break;
+                    }
+                    result.setResult_flag("OK");
+                    result.setResult_message(responseDataTwo.getString("MSG"));
+                    result.setMaterial_stion(responseDataTwo.getString("LOCATION")); //产品所在位置
+                    flag = false;
 
                 }
-
-                //reqDataDetail.put("IFS", "STAS42");
-                reqDataDetail.put("IN_VEHICLES", deviceRequest.getString("con_sn"));
-                reqDataDetail.put("IN_ET_CD", deviceRequest.getString("device_sn"));
-                reqDataDetail.put("IN_TUS", "2"); //代表查一次
-
-
-                JSONObject responseDataTwo = mesApiUtils.doPost(reqDataDetail);
-                switch (responseDataTwo.getString("STATION")) {
-                    case "C0101":
-                        result.setFrame_stion("B"); //老化架位置
-                        break;
-                    case "C0103":
-                        result.setFrame_stion("B"); //老化架位置
-                        break;
-                    default:
-                        result.setFrame_stion("A"); //老化架位置
-                        break;
-                }
-                result.setResult_flag("OK");
-                result.setResult_message(responseDataTwo.getString("MSG"));
-                result.setMaterial_stion(responseDataTwo.getString("LOCATION")); //产品所在位置
-                flag = false;
-
-            }
 
             } else {
                 result.setResult_flag("OK");
                 result.setResult_message("无老化架，等待补充！");
             }
         } catch (Exception e) {
-            result.setResult_flag("NG");
+            result.setResult_flag("9");
             result.setResult_message("FAIL");
             e.printStackTrace();
         }
@@ -207,7 +210,7 @@ public class ScadaToAgvOld extends JdbcDaoSupport {
         JSONObject json = new JSONObject(msg.toString());
         try {
             redisUtils.set("iscg", json.getString("work_sn"));
-            if(json.getString("work_sn").equals("OK")) {
+            if (json.getString("work_sn").equals("OK")) {
                 LOG.info("收到前测切换参观模式");
                 sh.setResult_message("收到前测切换参观模式");
             } else {
@@ -222,7 +225,6 @@ public class ScadaToAgvOld extends JdbcDaoSupport {
         }
         return sh;
     }
-
 
 
     /**
@@ -258,9 +260,9 @@ public class ScadaToAgvOld extends JdbcDaoSupport {
         try {
             emptyK = template.queryForMap(hSql);
         } catch (Exception e) {
-                LOG.info(line + "滚筒线回收空箱的点位状态都为0,请重新放置空框，点位为：" + matPoint);
-            emptyK.put("AGV_POINT","CG0401");
-            emptyK.put("MAT_POINT","B");
+            LOG.info(line + "滚筒线回收空箱的点位状态都为0,请重新放置空框，点位为：" + matPoint);
+            emptyK.put("AGV_POINT", "CG0401");
+            emptyK.put("MAT_POINT", "B");
         }
 
 
@@ -325,9 +327,9 @@ public class ScadaToAgvOld extends JdbcDaoSupport {
 
         } else { //否则就回到滚筒线接空框
             if (emptyK.size() > 0) {
-                if(matPoint.equals("ECD106") || matPoint.equals("ECD107")) {
+                if (matPoint.equals("ECD106") || matPoint.equals("ECD107")) {
                     js.put("targetEmptyRecyleWb", "CG0301");
-                } else if(matPoint.equals("ECD206") || matPoint.equals("ECD207")) {
+                } else if (matPoint.equals("ECD206") || matPoint.equals("ECD207")) {
                     js.put("targetEmptyRecyleWb", "CG0401");
                 } else {
                     js.put("targetEmptyRecyleWb", emptyK.get("AGV_POINT").toString());//空框回收下箱点(给我们送空箱的点)*/
@@ -403,7 +405,7 @@ public class ScadaToAgvOld extends JdbcDaoSupport {
             sq.setFlow_code(json.getString("mat_point"));
             sq.setResult_flag("OK");
             sql = "INSERT INTO MES1.CALL_MATERIAL(ID,ITEM_GRP_CD,CRT_ID,CRT_DT,WP_CD,ET_CD,STATION_CD,STATUS) values (?,?,'admin',sysdate,?,?,?,0)";
-            template.update(sql,object,map.get("ITEM_GRP_CD"),map.get("WP_CD"),json.getString("mat_point"),map.get("STATION_CD"));
+            template.update(sql, object, map.get("ITEM_GRP_CD"), map.get("WP_CD"), json.getString("mat_point"), map.get("STATION_CD"));
         } catch (Exception e) {
             sq.setResult_flag("NG");
             LOG.error("设备叫料异常");

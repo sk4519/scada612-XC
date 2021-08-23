@@ -85,6 +85,7 @@ public class SapCpletionConfir extends JdbcDaoSupport{
 			parameterList.setValue("I_SERNR", "000000000"+sn); //序列号
 			parameterList.setValue("I_VORNR", "00"+code); //活动编号（工序）
 			parameterList.setValue("I_FLAG", ""); //是否检查档案（空不检查）
+			log.info("完工确认入参："+sn);
 			function.execute(jCoDestination);
 
 			//如果入参是内表形式，就以如下代码传入sap系统

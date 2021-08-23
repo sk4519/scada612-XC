@@ -641,9 +641,9 @@ public class ScadaPackServiceImpl implements ScadaPackService {
         String[] strarray = data.split("\\|");
         try {
             JCoDestination jCoDestination = sapUtils.jCoDestination;//接收连接对象
-            JCoFunction function = sapUtils.getFunction("ZRFC_AUFNR_BG");//获取到函数
             for (int i = 0; i < strarray.length; i++) {
                 if (strarray[i].length() == 9) {
+                    JCoFunction function = sapUtils.getFunction("ZRFC_AUFNR_BG");//获取到函数
                     String result = confir.cpletionConfirAll(strarray[i], "50", function, jCoDestination);//完工确认
                     if (result.equals("操作失败")||result.length()>6 ) {
                         failureNum++;
