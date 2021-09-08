@@ -69,7 +69,7 @@ public class SynOldTest extends JdbcDaoSupport{
 				count = 0;
 			//从diag程序获取已经老化完成的产品，根据老化载具绑定表获取SN
 			String passSql = "select PRODUCTSN from OLD_SHELF_BIND m "
-					+ "where m.BIND_STA = 0 ";
+					+ "where m.BIND_STA = 0  ";
 			List<Map<String, Object>> passList = this.getJdbcTemplate().queryForList(passSql);
 		 if(passList.size()>0) {
 			StringBuffer buffer = new StringBuffer();

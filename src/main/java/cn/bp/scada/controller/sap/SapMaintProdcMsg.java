@@ -200,7 +200,8 @@ public class SapMaintProdcMsg extends JdbcDaoSupport{
 		JSONObject js = new JSONObject();
 		js.put("sn", crate);
 		js.put("type",json.getString("CODETYPE"));
-		if(json.getString("CODETYPE") .equals("LCQN")) {
+		js.put("P_QN", oldcode); //散件QN(浪潮QN)--兼容qn和ycsn两种方式
+		/*if(json.getString("CODETYPE") .equals("LCQN")) {
 			js.put("P_QN", oldcode); //散件QN(浪潮QN)
 		} else { //原厂QN
 			if(json.getString("CODETYPE") .equals("")) {
@@ -209,7 +210,7 @@ public class SapMaintProdcMsg extends JdbcDaoSupport{
 				js.put("P_YCQN", oldcode); //原厂QN
 			}
 
-		}
+		}*/
 
 		delePro.sapMaintProdcMsg(js);
 

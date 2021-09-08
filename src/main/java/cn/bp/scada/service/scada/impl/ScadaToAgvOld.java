@@ -103,9 +103,11 @@ public class ScadaToAgvOld extends JdbcDaoSupport {
                 if (redisUtils.get("iscg").toString().equals("OK")) { //是参观模式
                     reqDataDetail.put("IFS", "STAS422");
                     responseData = mesApiUtils.doPost(reqDataDetail);
+                    LOG.info("参观模式：Oracle返回扫码信息："+responseData.toString()+"   载具SN为："+deviceRequest.getString("con_sn"));
                 } else {
                     reqDataDetail.put("IFS", "STAS42");
                     responseData = mesApiUtils.doPost(reqDataDetail);
+                    LOG.info("生产模式：Oracle返回扫码信息："+responseData.toString()+"   载具SN为："+deviceRequest.getString("con_sn"));
                 }
 
 
